@@ -1,0 +1,18 @@
+parameters:
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: storageAccountName
+    type: string
+  - name: azureSubscription
+    type: string
+
+steps:
+    - task:  AzureCLI@2
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment group what-if --resource-group ${{ parameters.resourceGroupName }} --template-file $(System.ArtifactsDirectory)/main.json --parameters name=${{ parameters.storageAccountName }} location=${{ parameters.location }}

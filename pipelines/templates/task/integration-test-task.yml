@@ -1,0 +1,20 @@
+parameters:
+  - name: azureSubscription
+    type: string
+  - name: templatePath
+    type: string
+    default: '$(System.DefaultWorkingDirectory)\src'
+
+steps:
+  - task: AzurePowerShell@5
+    displayName: 'Run integration tests'
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscription }}"
+      ScriptType: 'InlineScript'
+      Inline: |
+        $Params = @{
+          Task = 'IntegrationTest'
+          TemplatePath = "${{ parameters.templatePath }}"
+        }
+        Invoke-Build @Params
+      azurePowerShellVersion: 'LatestVersion'

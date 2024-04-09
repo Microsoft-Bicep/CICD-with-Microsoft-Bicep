@@ -1,0 +1,11 @@
+steps:
+    - task: Powershell@2
+      displayName: 'Run ARM Test Toolkit'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $Params = @{
+            Task = 'TestBicep'
+            BuildDirectory = '$(System.ArtifactsDirectory)'
+          }
+          Invoke-Build @Params

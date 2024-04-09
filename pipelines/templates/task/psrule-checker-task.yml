@@ -1,0 +1,18 @@
+parameters:
+  - name: templatePath
+    type: string
+    default: '$(System.DefaultWorkingDirectory)\src'
+  - name: bicepBuild
+    type: string
+    default: $(bicepBuild)
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Validate Bicep file'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $Params = @{
+          Task = 'ValidateBicep'
+          TemplatePath = "${{ parameters.templatePath }}"
+        }

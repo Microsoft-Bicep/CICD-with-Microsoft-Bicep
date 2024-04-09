@@ -1,0 +1,32 @@
+parameters:
+    - name: agent
+      type: string
+      default: windows-latest
+    - name: templatePath
+      type: string
+      default: '$(System.DefaultWorkingDirectory)\src'
+    - name: beforeTtkScan
+      type: stepList
+      default:
+        - template: ../task/install-module-task.yml
+        - template: ../task/download-pipeline-artifact-task.yml
+    - name: afterTtkScan
+      type: stepList
+      default:
+        - template: ../task/publish-test-results-task.yml
+  
+jobs:
+    - template: arm-ttk-checker-job.yml
+      parameters:
+        agent: ${{ parameters.agent }}
+        preTestSteps: ${{ parameters.beforeTtkScan }}
+        afterTestSteps: ${{ parameters.afterTtkScan }}
+  
+    - template: psrule-checker-job.yml
+      parameters:
+        agent: ${{ parameters.agent }}
+        templatePath: ${{ parameters.templatePath }}
+        afterTestSteps:
+          - template: ../task/publish-test-results-task.yml
+            parameters:
+              testResultsFiles: $(PSRuleResultFile)

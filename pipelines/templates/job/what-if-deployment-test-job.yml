@@ -1,0 +1,36 @@
+parameters:
+  - name: agent
+    type: string
+    default: windows-latest
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: storageAccountName
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: prePublishSteps
+    type: stepList
+    default:
+      - template: ../task/install-module-task.yml
+      - template: ../task/download-pipeline-artifact-task.yml
+  - name: afterPublishSteps
+    type: stepList
+    default: []
+
+
+jobs:
+  - job: Publish
+    displayName: 'Publish ARM to check WhatIfDeployment'
+    pool:
+      vmImage: ${{ parameters.agent }}
+    steps:
+      - ${{ parameters.prePublishSteps }}
+      - template: ../task/what-if-deployment-bicep-task.yml
+        parameters:
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          location: ${{ parameters.location }}
+          storageAccountName: ${{ parameters.storageAccountName }}
+          azureSubscription: ${{ parameters.azureSubscription }}
+      - ${{ parameters.afterPublishSteps }}

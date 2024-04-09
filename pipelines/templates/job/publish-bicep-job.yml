@@ -1,0 +1,37 @@
+parameters:
+  - name: agent
+    type: string
+    default: windows-latest
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: storageAccountName
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: prePublishSteps
+    type: stepList
+    default:
+      - template: ../task/install-module-task.yml
+      - template: ../task/download-pipeline-artifact-task.yml
+  - name: afterPublishSteps
+    type: stepList
+    default: []
+
+jobs:
+  - job: Publish
+    pool:
+      vmImage: ${{ parameters.agent }}
+    steps:
+      - ${{ parameters.prePublishSteps }}
+      - template: ../task/publish-bicep-task.yml
+        parameters:
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          location: ${{ parameters.location }}
+          azureSubscription: ${{ parameters.azureSubscription }}
+          storageAccountName: ${{ parameters.storageAccountName }}
+          subscriptionId: ${{ parameters.subscriptionId }}
+      - ${{ parameters.afterPublishSteps }}

@@ -1,0 +1,30 @@
+parameters:
+    - name: testResultsFormat
+      type: string
+      default: 'NUnit'
+    - name: testResultsFiles
+      type: string
+      default: $(TestResultFile)
+    - name: searchFolder
+      type: string
+      default: $(System.DefaultWorkingDirectory)
+    - name: mergeTestResults
+      type: boolean
+      default: true
+    - name: failTaskOnFailedTests
+      type: boolean
+      default: true
+    - name: testRunTitle
+      type: string
+      default: 'Unit test results'
+  
+steps:
+    - task: PublishTestResults@2
+      displayName: 'Publishing ${{parameters.testResultsFormat}} results'
+      inputs:
+        testResultsFormat: ${{ parameters.testResultsFormat }}
+        testResultsFiles: ${{ parameters.testResultsFiles }}
+        searchFolder: ${{ parameters.searchFolder }}
+        mergeTestResults: ${{ parameters.mergeTestResults }}
+        failTaskOnFailedTests: ${{ parameters.failTaskOnFailedTests }}
+        testRunTitle: ${{ parameters.testRunTitle }}

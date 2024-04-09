@@ -1,0 +1,11 @@
+parameters:
+  - name: moduleName
+    type: string
+    default: 'InvokeBuild'
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Install module'
+    inputs:
+      targetType: 'inline'
+      script: Install-Module -Name "${{ parameters.moduleName }}" -Force -Scope CurrentUser

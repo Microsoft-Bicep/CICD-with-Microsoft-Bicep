@@ -1,0 +1,24 @@
+parameters:
+  - name: templatePath
+    type: string
+  - name: location
+    type: string
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Clean Environment'
+    inputs:
+      targetType: 'inline'
+      script: 'Remove-Item -Path $BuildRoot\build -Force -ErrorAction SilentlyContinue -Recurse'
+
+  - task: PowerShell@2
+    displayName: 'Building Bicep file'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $Params = @{
+          Task = 'BuildBicep'
+          TemplatePath = "${{ parameters.templatePath }}"
+          location = "${{ parameters.location }}"
+        }
+        Invoke-Build @Params

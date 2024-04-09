@@ -1,0 +1,49 @@
+variables:
+- group: 'cicdvariablegroup'
+
+stages:
+  - stage: BuildJob
+    displayName: "Build Job"
+    jobs:
+      - template: ..\templates\job\build-bicep-job.yml
+        parameters:
+          location: '$(location)'
+  - stage: UnitTest
+    displayName: "Unit test"
+    jobs:
+      - template: ..\templates\job\unit-test-job.yml
+  - stage: IntegrationTest
+    displayName: "Integration test"
+    jobs:
+      - template: ..\templates\job\integration-test-job.yml
+        parameters:
+          azureSubscription: $(serviceConnection)
+  - stage: PublishDev
+    displayName: 'Publish Dev template'
+    jobs:
+      - template: ..\templates\job\publish-bicep-job.yml
+        parameters:
+          azureSubscription: $(serviceConnection)
+          resourceGroupName: '$(devResourceGroupName)'
+          storageAccountName: '$(devStorageAccountName)'
+          location: '$(location)'
+          subscriptionId: '$(subscriptionId)'
+  - stage: WhatIfDeployment
+    displayName: "WhatIfDeployment"
+    jobs:
+      - template: ..\templates\job\what-if-deployment-test-job.yml
+        parameters:
+          azureSubscription: $(serviceConnection)
+          resourceGroupName: '$(prodResourceGroupName)'
+          storageAccountName: '$(prodStorageAccountName)'
+          location: '$(location)'
+  - stage: PublishProduction
+    displayName: 'Publish Prod template'
+    jobs:
+      - template: ..\templates\job\publish-bicep-job.yml
+        parameters:
+          azureSubscription: $(serviceConnection)
+          resourceGroupName: '$(prodResourceGroupName)'
+          storageAccountName: '$(prodStorageAccountName)'
+          location: '$(location)'
+          subscriptionId: '$(subscriptionId)'

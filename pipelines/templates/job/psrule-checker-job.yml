@@ -1,0 +1,33 @@
+parameters:
+    - name: agent
+      type: string
+      default: windows-latest
+    - name: templatePath
+      type: string
+      default: '$(System.DefaultWorkingDirectory)\src'
+    - name: bicepBuild
+      type: string
+      default: $(bicepBuild)
+    - name: preTestSteps
+      type: stepList
+      default:
+        - template: ../task/bootstrap-task.yml
+    - name: afterTestSteps
+      type: stepList
+      default:
+        - template: ../task/publish-test-results-task.yml
+          parameters:
+            testResultsFiles: $(PSRuleResultFile)
+  
+jobs:
+    - job: PSRule
+      displayName: 'Check PSRule for Azure'
+      pool:
+        vmImage: ${{ parameters.agent }}
+      steps:
+        - ${{ parameters.preTestSteps }}
+        - template: ../task/psrule-checker-task.yml
+          parameters:
+            templatePath: ${{ parameters.templatePath }}
+            bicepBuild: ${{ parameters.bicepBuild }}
+        - ${{ parameters.afterTestSteps }}

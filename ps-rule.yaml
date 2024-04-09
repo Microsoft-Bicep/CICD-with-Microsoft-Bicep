@@ -1,0 +1,28 @@
+# YAML: Enable expansion for Bicep source files.
+configuration:
+  AZURE_BICEP_FILE_EXPANSION: true
+  AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 40
+
+# Include rules and resources from the specified module
+include:
+  module:
+  - PSRule.Rules.Azure
+
+input:
+  pathIgnore:
+
+  # Ignore other files in the repository.
+  - '.vscode/'
+  - '.github/'
+  - '*.md'
+  - 'Build'
+  - 'TestResults'
+
+  # Exclude modules but not tests.
+  - 'src/**/modules/*.bicep'
+  - 'src/**/resources/*.bicep'
+  - '!src/**/.tests/*.tests.bicep'
+
+# Exclude rules that have incorrectly been selected by a path
+execution:
+  notProcessedWarning: false

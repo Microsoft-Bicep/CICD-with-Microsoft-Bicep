@@ -1,0 +1,9 @@
+steps:
+    - task: PowerShell@2
+      displayName: 'Install Powershell modules'
+      inputs:
+        targetType: 'inline'
+        script: |
+          .\bootstrap.ps1 -Bootstrap
+  
+          # Install-Module -Name InvokeBuild -Force

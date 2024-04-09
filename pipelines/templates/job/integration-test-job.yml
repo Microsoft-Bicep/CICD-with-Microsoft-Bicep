@@ -1,0 +1,29 @@
+parameters:
+  - name: agent
+    type: string
+    default: windows-latest
+  - name: azureSubscription
+    type: string
+  - name: beforeIntegrationTests
+    type: stepList
+    default:
+      - template: ../task/bootstrap-task.yml
+  - name: afterIntegrationTests
+    type: stepList
+    default:
+      - template: ../task/publish-test-results-task.yml
+        parameters:
+          testResultsFiles: $(IntegrationResultFile)
+          testRunTitle: 'Integration test results'
+
+jobs:
+  - job: IntegrationTest
+    displayName: 'Integration test'
+    pool:
+      vmImage: ${{ parameters.agent }}
+    steps:
+      - ${{ parameters.beforeIntegrationTests }}
+      - template: ../task/integration-test-task.yml
+        parameters:
+          azureSubscription: ${{ parameters.azureSubscription }}
+      - ${{ parameters.afterIntegrationTests }}

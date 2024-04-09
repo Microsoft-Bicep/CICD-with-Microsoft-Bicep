@@ -1,0 +1,29 @@
+parameters:
+  - name: agent
+    type: string
+    default: windows-latest
+  - name: templatePath
+    type: string
+    default: '$(System.DefaultWorkingDirectory)\src'
+  - name: location
+    type: string    
+  - name: preBuildSteps
+    type: stepList
+    default:
+      - template: ../task/install-module-task.yml
+  - name: afterBuildSteps
+    type: stepList
+    default:
+      - template: ../task/publish-pipeline-artifact-task.yml
+
+jobs:
+  - job: Build
+    pool:
+      vmImage: ${{ parameters.agent }}
+    steps:
+      - ${{ parameters.preBuildSteps }}
+      - template: ../task/build-bicep-task.yml
+        parameters:
+          templatePath: ${{ parameters.templatePath }}
+          location: ${{ parameters.location }}
+      - ${{ parameters.afterBuildSteps }}

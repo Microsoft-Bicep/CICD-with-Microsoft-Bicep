@@ -1,0 +1,14 @@
+parameters:
+  - name: artifactName
+    type: string
+    default: json
+  - name: targetPath
+    type: string
+    default: $(System.DefaultWorkingDirectory)\build
+
+steps:
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish ${{parameters.artifactName}} artifact'
+    inputs:
+      artifactName: ${{parameters.artifactName}}
+      targetPath: ${{parameters.targetPath}}
